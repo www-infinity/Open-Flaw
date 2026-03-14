@@ -67,9 +67,36 @@ const Wallet = (() => {
       doi     : tok.doi,
       channel : tok.radioChannel || null,
       ts      : Date.now(),
+      pagePath: null,
+      pageUrl : null,
+      usedIn  : [],
     });
     if (w.minted.length > 50) w.minted = w.minted.slice(0, 50);
     save(w);
+  }
+
+  /** Attach a committed webpage URL to a minted token (called after /api/commit resolves). */
+  function updateTokenPage(spin, pagePath, pageUrl) {
+    const w = load();
+    const entry = w.minted.find(t => t.spin === spin);
+    if (entry) {
+      entry.pagePath = pagePath || null;
+      entry.pageUrl  = pageUrl  || null;
+      save(w);
+    }
+  }
+
+  /** Record where/when a token page was accessed (context is a short string label). */
+  function markTokenUsed(spin, context) {
+    const w = load();
+    const entry = w.minted.find(t => t.spin === spin);
+    if (entry) {
+      if (!Array.isArray(entry.usedIn)) entry.usedIn = [];
+      entry.usedIn.push({ context: String(context).slice(0, 60), ts: Date.now() });
+      // keep the last 20 usage records per token
+      if (entry.usedIn.length > 20) entry.usedIn = entry.usedIn.slice(-20);
+      save(w);
+    }
   }
 
   // ── Countdown helpers ──────────────────────────────────────────────────────
@@ -111,12 +138,20 @@ const Wallet = (() => {
         listEl.innerHTML = '<div class="wallet-empty">No tokens minted yet. Spin the reels!</div>';
       } else {
         listEl.innerHTML = w.minted.map(t => {
-          const ch = t.channel ? `<span class="wallet-token-channel">${t.channel}</span>` : '';
+          const ch      = t.channel ? `<span class="wallet-token-channel">${esc(t.channel)}</span>` : '';
+          const pageLink = t.pageUrl
+            ? `<a class="wallet-token-page" href="${esc(t.pageUrl)}" target="_blank" rel="noopener noreferrer" title="View generated webpage">🌐 Page</a>`
+            : `<span class="wallet-token-page wallet-token-page-pending" title="Webpage is being committed…">🌐 …</span>`;
+          const usageCount = Array.isArray(t.usedIn) && t.usedIn.length > 0
+            ? `<span class="wallet-token-used" title="Used ${t.usedIn.length}× in the system">✅ ${t.usedIn.length}×</span>`
+            : '';
           return `<div class="wallet-token-item">
             <span class="wallet-token-spin">#${t.spin}</span>
             ${ch}
             <span class="wallet-token-title">${esc(t.title).substring(0, MAX_TITLE)}…</span>
             <span class="wallet-token-doi">${esc(t.doi)}</span>
+            ${pageLink}
+            ${usageCount}
           </div>`;
         }).join('');
       }
@@ -152,5 +187,5 @@ const Wallet = (() => {
     }, 10_000);
   }
 
-  return { load, save, spend, refund, addMintedToken, grantHourly, renderWallet, initWallet };
+  return { load, save, spend, refund, addMintedToken, updateTokenPage, markTokenUsed, grantHourly, renderWallet, initWallet };
 })();
