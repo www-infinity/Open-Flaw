@@ -108,6 +108,39 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// ── GET /api/radio — Radio Browser community API proxy ───────────────────────
+app.get('/api/radio', async (req, res) => {
+  const tag    = String(req.query.tag    || '').trim().slice(0, 60);
+  const name   = String(req.query.name   || '').trim().slice(0, 60);
+  const limit  = Math.min(parseInt(req.query.limit) || 10, 20);
+  if (!tag && !name) return res.status(400).json({ error: 'tag or name required' });
+
+  try {
+    // Use the community Radio Browser API (no API key required)
+    const qs = tag
+      ? `tag=${encodeURIComponent(tag)}&limit=${limit}&order=votes&reverse=true&hidebroken=true`
+      : `name=${encodeURIComponent(name)}&limit=${limit}&order=votes&reverse=true&hidebroken=true`;
+    const url = `https://de1.api.radio-browser.info/json/stations/search?${qs}`;
+    const body = await fetchHttps(url, {
+      'User-Agent': 'InfinitySystem/1.0 (https://github.com/www-infinity/Open-Flaw)',
+    });
+    const stations = JSON.parse(body);
+    const safe = stations.map(s => ({
+      name:     s.name,
+      url_resolved: s.url_resolved,
+      country:  s.country,
+      tags:     s.tags,
+      bitrate:  s.bitrate,
+      codec:    s.codec,
+      favicon:  s.favicon,
+    }));
+    res.json(safe);
+  } catch (err) {
+    console.error('Radio Browser error:', err.message);
+    res.status(500).json({ error: 'Radio search unavailable', message: err.message });
+  }
+});
+
 // ── POST /api/ai — LLM proxy (keeps API key hidden from client) ───────────────
 // Maximum individual message length — prevents abuse while allowing detailed queries
 const AI_MAX_MSG_CHARS = 4000;
