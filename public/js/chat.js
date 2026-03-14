@@ -1,28 +1,64 @@
 /* chat.js — ∞ Infinity Smart AI Chat
-   Flow: User query → DuckDuckGo search (server proxy) → reasoning chain → response
-   If Chrome's built-in AI (Gemma Nano / window.ai) is available, it synthesises
-   the search results into a natural language answer.  Falls back to a structured
-   reasoning chain when the model is unavailable. */
+   Flow: User query → DuckDuckGo search (server proxy) → LLM synthesis via /api/ai
+   Falls back to Chrome built-in AI (Gemma Nano) if available, then to a structured
+   reasoning chain when neither LLM source is reachable. */
 
 const InfinityChat = (() => {
   'use strict';
 
   const $ = id => document.getElementById(id);
-  let aiSession = null;  // Chrome built-in AI session (Gemma Nano)
+  let aiSession = null;  // Chrome built-in AI session (Gemma Nano) — optional tier 2
 
-  // ── Chrome built-in AI (Gemma Nano / Prompt API) ──────────────────────────
+  // ── System prompt for the LLM ─────────────────────────────────────────────
+  const SYSTEM_PROMPT =
+    'You are the Infinity Research AI for the ∞ Infinity System — an avant-garde radio-themed ' +
+    'research platform built by www-infinity. You speak naturally, warmly, and intelligently ' +
+    'like a brilliant friend who loves science, radio, Bitcoin, cryptography, and the cosmos. ' +
+    'Be conversational, insightful, and occasionally witty. When given DuckDuckGo search results, ' +
+    'synthesise them into a coherent answer and cite sources inline. Keep answers concise but complete. ' +
+    'Topics you excel at: radio channels (shortwave, FM, AM, ham, scanner), scientific research, ' +
+    'Bitcoin & blockchain, quantum computing, cryptography, the Token Marketplace, and the ' +
+    '∞ Infinity System itself.';
+
+  // ── Tier 1 — Server-side LLM via /api/ai (API key kept server-side) ─────────
+  async function callServerLLM(userMsg, facts, tokenContext) {
+    try {
+      const searchCtx = facts.length
+        ? '\n\nDuckDuckGo search results:\n' +
+          facts.map(f => `- [${f.src}] ${f.text.slice(0, 250)}`).join('\n')
+        : '';
+      const tokCtx = tokenContext
+        ? `\n\nCurrent radio research token: "${tokenContext.title}" | ` +
+          `keywords: ${(tokenContext.keywords || tokenContext.fieldTags || []).join(', ')}`
+        : '';
+      const userContent = userMsg + searchCtx + tokCtx;
+
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user',   content: userContent   },
+          ],
+        }),
+      });
+      if (res.status === 503) return null;  // AI not configured — silently fall through
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.reply || null;
+    } catch {
+      return null;
+    }
+  }
+
+  // ── Tier 2 — Chrome built-in AI (Gemma Nano / window.ai) ─────────────────
   async function tryBuiltInAI() {
     try {
       if (!window.ai?.languageModel) return null;
       const caps = await window.ai.languageModel.capabilities();
       if (caps.available === 'no') return null;
-      const session = await window.ai.languageModel.create({
-        systemPrompt:
-          'You are the Infinity Research AI for the ∞ Infinity System — a radio-themed ' +
-          'research platform. Answer questions naturally and concisely. When given DuckDuckGo ' +
-          'search results, use them to ground your answer and cite sources. Topics include ' +
-          'radio channels, science, Bitcoin, cryptography, quantum computing, and the Token Marketplace.',
-      });
+      const session = await window.ai.languageModel.create({ systemPrompt: SYSTEM_PROMPT });
       console.log('[∞ Chat] Chrome built-in AI (Gemma Nano) ready');
       return session;
     } catch (e) {
@@ -46,7 +82,7 @@ const InfinityChat = (() => {
   function extractFacts(data) {
     if (!data) return [];
     const facts = [];
-    if (data.Answer)       facts.push({ src: 'Instant Answer', text: data.Answer,       url: null });
+    if (data.Answer)       facts.push({ src: 'Instant Answer', text: data.Answer, url: null });
     if (data.AbstractText) facts.push({ src: data.AbstractSource || 'Wikipedia', text: data.AbstractText, url: data.AbstractURL });
     if (data.Definition)   facts.push({ src: data.DefinitionSource || 'Dictionary', text: data.Definition, url: data.DefinitionURL });
     (data.RelatedTopics || []).slice(0, 3).forEach(t => {
@@ -55,7 +91,7 @@ const InfinityChat = (() => {
     return facts;
   }
 
-  // ── Domain-aware fallback (no search results or AI) ───────────────────────
+  // ── Tier 3 — Domain-aware fallback ────────────────────────────────────────
   function domainFallback(query, ctx) {
     const q = query.toLowerCase();
     if (/bitcoin|btc|blockchain/.test(q))
@@ -71,9 +107,9 @@ const InfinityChat = (() => {
     return '🤖 I didn\'t find a direct answer. Try rephrasing or check DuckDuckGo directly.';
   }
 
-  // ── Reasoning chain builder ───────────────────────────────────────────────
-  const MAX_PRIMARY_TEXT = 320; // chars shown from the top DDG result
-  const MAX_RELATED_TEXT = 160; // chars shown from secondary result
+  // ── Reasoning chain builder (tier 3) ─────────────────────────────────────
+  const MAX_PRIMARY_TEXT = 320;
+  const MAX_RELATED_TEXT = 160;
 
   function buildResponse(query, facts, ctx) {
     let html = '';
@@ -98,7 +134,8 @@ const InfinityChat = (() => {
     const stepsEl = $('chat-reasoning-steps');
     if (!panel || !stepsEl) return;
     panel.style.display = 'block';
-    stepsEl.innerHTML = steps.map((s, i) => `<div class="reasoning-step" style="animation-delay:${i * 0.12}s">${s}</div>`).join('');
+    stepsEl.innerHTML = steps.map((s, i) =>
+      `<div class="reasoning-step" style="animation-delay:${i * 0.12}s">${s}</div>`).join('');
   }
 
   function hideReasoning() {
@@ -109,8 +146,11 @@ const InfinityChat = (() => {
   function updateBadge(source) {
     const badge = $('chat-ai-badge');
     if (!badge) return;
-    if (source === 'gemma') {
-      badge.textContent = '🧠 Gemma AI';
+    if (source === 'llm') {
+      badge.textContent = '🧠 Full LLM · Live AI';
+      badge.className   = 'chat-ai-badge badge-llm';
+    } else if (source === 'gemma') {
+      badge.textContent = '🧠 Gemma Nano · On-Device';
       badge.className   = 'chat-ai-badge badge-gemma';
     } else {
       badge.textContent = '⚡ DDG + Reasoning';
@@ -120,72 +160,92 @@ const InfinityChat = (() => {
 
   function esc(s) {
     return String(s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   // ── Main chat entry point ─────────────────────────────────────────────────
   async function chat(userMsg, tokenContext) {
     const steps = [];
 
-    // Step 1 — parse query
+    // Notify background of AI activity
+    if (typeof Bg3D !== 'undefined') Bg3D.setTheme('ai');
+
     steps.push(`🔍 Parsing: "<em>${esc(userMsg.slice(0, 55))}</em>"`);
     showReasoning(steps);
 
-    // Step 2 — search DDG
+    // DDG search runs in parallel with LLM warm-up
     steps.push('📡 Searching DuckDuckGo…');
     showReasoning(steps);
 
-    const [ddgData] = await Promise.all([ddgSearch(userMsg)]);
-    const facts = extractFacts(ddgData);
+    const ddgData = await ddgSearch(userMsg);
+    const facts   = extractFacts(ddgData);
 
-    if (facts.length > 0) {
-      steps.push(`✅ Found ${facts.length} result(s) from DuckDuckGo`);
-    } else {
-      steps.push('⚠️ No direct results — using domain knowledge');
-    }
-
-    // Step 3 — cross-reference token context
+    steps.push(facts.length > 0
+      ? `✅ Found ${facts.length} result(s) from DuckDuckGo`
+      : '⚠️ No direct DDG results — using AI knowledge');
     if (tokenContext) {
-      steps.push(`🎙️ Cross-referencing radio token: "<em>${esc(tokenContext.title.slice(0, 45))}…</em>"`);
+      steps.push(`🎙️ Context: "<em>${esc(tokenContext.title.slice(0, 45))}…</em>"`);
     }
     showReasoning(steps);
 
-    // Step 4 — try Chrome built-in AI
-    if (!aiSession) aiSession = await tryBuiltInAI();
+    // ── Tier 1: server LLM ─────────────────────────────────────────────────
+    steps.push('🧠 Asking AI…');
+    showReasoning(steps);
 
     let html, source;
-    if (aiSession) {
-      steps.push('🧠 Gemma AI synthesising response…');
-      showReasoning(steps);
-      try {
-        const searchCtx = facts.length
-          ? `\n\nDuckDuckGo results:\n${facts.map(f => `- [${f.src}] ${f.text.slice(0, 200)}`).join('\n')}`
-          : '';
-        const tokCtx = tokenContext
-          ? `\n\nCurrent radio research token: "${tokenContext.title}" | keywords: ${(tokenContext.keywords || tokenContext.fieldTags || []).join(', ')}`
-          : '';
-        const prompt = `User: ${userMsg}${searchCtx}${tokCtx}\n\nAnswer naturally, cite sources where available.`;
-        const raw    = await aiSession.prompt(prompt);
-        const ddgUrl = `https://duckduckgo.com/?q=${encodeURIComponent(userMsg)}`;
-        html   = `🤖 ${raw}\n\n<a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
-        source = 'gemma';
-      } catch (e) {
-        console.warn('[∞ Chat] Gemma error, falling back:', e.message);
-        aiSession = null;
+    const llmReply = await callServerLLM(userMsg, facts, tokenContext);
+
+    if (llmReply) {
+      const ddgUrl = `https://duckduckgo.com/?q=${encodeURIComponent(userMsg)}`;
+      html   = '🤖 ' + esc(llmReply)
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+      html  += `<br><br><a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
+      source = 'llm';
+      steps.push('✅ Full AI response ready');
+    } else {
+      // ── Tier 2: Chrome built-in AI ─────────────────────────────────────
+      if (!aiSession) aiSession = await tryBuiltInAI();
+
+      if (aiSession) {
+        steps.push('🧠 Gemma AI synthesising…');
+        showReasoning(steps);
+        try {
+          const searchCtx = facts.length
+            ? `\n\nDuckDuckGo results:\n${facts.map(f => `- [${f.src}] ${f.text.slice(0, 200)}`).join('\n')}`
+            : '';
+          const tokCtx = tokenContext
+            ? `\n\nCurrent token: "${tokenContext.title}" | keywords: ${(tokenContext.keywords || tokenContext.fieldTags || []).join(', ')}`
+            : '';
+          const prompt = `User: ${userMsg}${searchCtx}${tokCtx}\n\nAnswer naturally, cite sources.`;
+          const raw    = await aiSession.prompt(prompt);
+          const ddgUrl = `https://duckduckgo.com/?q=${encodeURIComponent(userMsg)}`;
+          html   = `🤖 ${esc(raw)}\n\n<a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
+          source = 'gemma';
+          steps.push('✅ Gemma response ready');
+        } catch (e) {
+          console.warn('[∞ Chat] Gemma error, falling back:', e.message);
+          aiSession = null;
+          html      = buildResponse(userMsg, facts, tokenContext);
+          source    = 'reasoning';
+          steps.push('✅ Response ready');
+        }
+      } else {
+        // ── Tier 3: DDG + reasoning chain ─────────────────────────────────
+        steps.push('⚙️ Building reasoned response…');
+        showReasoning(steps);
         html   = buildResponse(userMsg, facts, tokenContext);
         source = 'reasoning';
+        steps.push('✅ Response ready');
       }
-    } else {
-      steps.push('⚙️ Building reasoned response…');
-      showReasoning(steps);
-      html   = buildResponse(userMsg, facts, tokenContext);
-      source = 'reasoning';
     }
 
-    steps.push('✅ Response ready');
     showReasoning(steps);
     setTimeout(hideReasoning, 2500);
+
+    // Reset background theme
+    if (typeof Bg3D !== 'undefined') Bg3D.setTheme('default');
 
     updateBadge(source);
     return { html, steps, source };
@@ -193,7 +253,7 @@ const InfinityChat = (() => {
 
   // ── Init ───────────────────────────────────────────────────────────────────
   async function init() {
-    // Warm up AI session in background — non-blocking
+    // Warm up Chrome built-in AI in background (non-blocking)
     if (window.ai?.languageModel) {
       tryBuiltInAI().then(s => { if (s) aiSession = s; });
     }

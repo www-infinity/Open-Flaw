@@ -15,8 +15,9 @@ const GITHUB_OWNER = process.env.GITHUB_OWNER || 'www-infinity';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Open-Flaw';
 
 const SEARCH_TIMEOUT_MS = 8000;
+const AI_TIMEOUT_MS = 30000;
 
-// ── HTTP helper (follows one redirect) ───────────────────────────────────────
+// ── HTTPS GET helper (follows one redirect) ───────────────────────────────────
 function fetchHttps(urlStr, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     const req = https.get(urlStr, {
@@ -35,6 +36,33 @@ function fetchHttps(urlStr, extraHeaders = {}) {
     });
     req.on('error', reject);
     req.setTimeout(SEARCH_TIMEOUT_MS, () => { req.destroy(); reject(new Error('Search request timed out')); });
+  });
+}
+
+// ── HTTPS POST helper ─────────────────────────────────────────────────────────
+function postHttps(urlStr, body, extraHeaders = {}) {
+  return new Promise((resolve, reject) => {
+    const url = new URL(urlStr);
+    const options = {
+      hostname: url.hostname,
+      port:     url.port || 443,
+      path:     url.pathname + url.search,
+      method:   'POST',
+      headers: {
+        'Content-Type':   'application/json',
+        'Content-Length': Buffer.byteLength(body),
+        ...extraHeaders,
+      },
+    };
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => resolve(data));
+    });
+    req.on('error', reject);
+    req.setTimeout(AI_TIMEOUT_MS, () => { req.destroy(); reject(new Error('AI request timed out')); });
+    req.write(body);
+    req.end();
   });
 }
 
@@ -77,6 +105,60 @@ app.get('/api/search', async (req, res) => {
   } catch (err) {
     console.error('Search error:', err.message);
     res.status(500).json({ error: 'Search unavailable', message: err.message });
+  }
+});
+
+// ── POST /api/ai — LLM proxy (keeps API key hidden from client) ───────────────
+// Maximum individual message length — prevents abuse while allowing detailed queries
+const AI_MAX_MSG_CHARS = 4000;
+
+app.post('/api/ai', async (req, res) => {
+  const { messages } = req.body;
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages array required' });
+  }
+  // Limit to reasonable sizes to prevent abuse
+  if (messages.length > 20) {
+    return res.status(400).json({ error: 'Too many messages' });
+  }
+  for (const m of messages) {
+    if (!m || typeof m.role !== 'string' || typeof m.content !== 'string') {
+      return res.status(400).json({ error: 'Invalid message format' });
+    }
+    if (m.content.length > AI_MAX_MSG_CHARS) {
+      return res.status(400).json({ error: 'Message too long' });
+    }
+  }
+
+  const AI_API_KEY = process.env.AI_API_KEY;
+  const AI_API_URL = process.env.AI_API_URL || 'https://api.openai.com/v1/chat/completions';
+  const AI_MODEL   = process.env.AI_MODEL   || 'gpt-3.5-turbo';
+
+  if (!AI_API_KEY) {
+    return res.status(503).json({ error: 'AI not configured', hint: 'Set AI_API_KEY in .env' });
+  }
+
+  try {
+    const payload = JSON.stringify({
+      model: AI_MODEL,
+      messages,
+      max_tokens: 600,
+      temperature: 0.75,
+    });
+    const data = await postHttps(AI_API_URL, payload, {
+      'Authorization': `Bearer ${AI_API_KEY}`,
+      'User-Agent': 'InfinitySystem/1.0',
+    });
+    const result = JSON.parse(data);
+    if (result.error) {
+      console.error('AI API error:', result.error.message);
+      return res.status(502).json({ error: result.error.message || 'AI API error' });
+    }
+    const reply = result.choices?.[0]?.message?.content || '';
+    res.json({ reply, model: result.model || AI_MODEL });
+  } catch (err) {
+    console.error('AI proxy error:', err.message);
+    res.status(500).json({ error: 'AI request failed', message: err.message });
   }
 });
 
