@@ -450,10 +450,17 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: tok }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        console.warn('[∞] Commit request failed, HTTP', res.status);
+        return null;
+      }
       const data = await res.json();
-      if (data.committed) console.log('[∞] Token committed:', data.path);
+      if (data.committed) {
+        console.log('[∞] Token committed:', data.path, '| Page:', data.pagePath);
+        return { pagePath: data.pagePath, pageUrl: data.pageUrl };
+      }
     } catch (_) { /* silent fail — server may not be configured */ }
+    return null;
   }
 
   // ── Main spin handler ──────────────────────────────────────────────────────
@@ -528,8 +535,13 @@
       Marketplace.renderBalance();
     }
 
-    // Commit to repo (fire & forget)
-    commitToken(tok);
+    // Commit to repo (fire & forget), then attach the committed page URL to the wallet entry
+    commitToken(tok).then(page => {
+      if (page && typeof Wallet !== 'undefined') {
+        Wallet.updateTokenPage(tok.spin, page.pagePath, page.pageUrl);
+        Wallet.renderWallet();
+      }
+    });
 
     // Auto-research: pipe token title into AI chat (non-blocking)
     autoResearch(tok, result.primary);
@@ -541,6 +553,10 @@
   // ── Auto-research on spin ──────────────────────────────────────────────────
   async function autoResearch(tok, channel) {
     if (typeof InfinityChat === 'undefined') return;
+    // Track that this token was used in the AI auto-research
+    if (typeof Wallet !== 'undefined') {
+      Wallet.markTokenUsed(tok.spin, 'AI auto-research');
+    }
     const query = `${tok.title} — ${(tok.keywords || []).slice(0, 3).join(', ')}`;
     appendChatMsg(
       `📻 Tuned to <strong>${channel.icon} ${channel.name}</strong> · researching: <em>${esc(tok.title.slice(0, 80))}</em>…`,
@@ -567,6 +583,11 @@
     articleOpen = !articleOpen;
     els.fullArticle.style.display  = articleOpen ? 'block' : 'none';
     els.articleToggle.textContent  = articleOpen ? '📄 Hide Article' : '📄 Full Article';
+    // Track usage when user opens the full article for the active token
+    if (articleOpen && typeof Wallet !== 'undefined') {
+      const state = loadState();
+      if (state.token) Wallet.markTokenUsed(state.token.spin, 'Full article viewed');
+    }
   });
 
   // ── AI Chat ────────────────────────────────────────────────────────────────

@@ -584,6 +584,10 @@ body {
 .wallet-token-channel { font-size: 1rem; flex-shrink: 0; }
 .wallet-token-title   { color: var(--text); flex: 1; min-width: 0; }
 .wallet-token-doi     { font-family: var(--mono); font-size: 0.67rem; color: var(--cyan); flex-shrink: 0; }
+.wallet-token-page    { font-size: 0.7rem; flex-shrink: 0; color: var(--cyan); text-decoration: none; }
+.wallet-token-page:hover { text-decoration: underline; }
+.wallet-token-page-pending { opacity: 0.45; cursor: default; }
+.wallet-token-used    { font-family: var(--mono); font-size: 0.67rem; color: #80e080; flex-shrink: 0; }
 .wallet-empty         { color: var(--text-dim); font-size: 0.82rem; padding: 1rem 0; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
