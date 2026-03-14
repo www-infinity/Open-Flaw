@@ -3,23 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>∞ Infinity System — Bitcoin Crusher</title>
+  <title>∞ Infinity System — Radio Crusher</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <!-- ── Sidebar overlay ───────────────────────────────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+  <!-- ── Sidebar nav ───────────────────────────────────────────────────────── -->
+  <nav class="sidebar" id="sidebar" aria-label="Navigation menu" aria-hidden="true">
+    <div class="sidebar-header">
+      <span class="sidebar-title">∞ Infinity System</span>
+      <button class="icon-btn sidebar-close-btn" id="sidebar-close" aria-label="Close menu">✕</button>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="#slot-section"   class="sidebar-link">📻 Radio Crusher</a></li>
+      <li><a href="#token-section"  class="sidebar-link">🔬 Research Token</a></li>
+      <li><a href="#wallet-section" class="sidebar-link">💰 Token Wallet</a></li>
+      <li><a href="#market-section" class="sidebar-link">🛒 Marketplace</a></li>
+      <li><a href="#chat-section"   class="sidebar-link">🤖 AI Chat</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      Tokens are earned, not bought.<br />1 per hour · spend in the Marketplace.
+    </div>
+  </nav>
+
+  <!-- ── Header ────────────────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-left">
-      <button class="icon-btn" id="menu-btn" aria-label="Menu">☰</button>
-      <span class="header-icon">₿</span>
+      <button class="icon-btn" id="menu-btn" aria-label="Open menu">☰</button>
+      <span class="header-icon">��</span>
     </div>
     <div class="header-center">
       <span class="brand-infinity">∞ Infinity System</span>
       <span class="brand-sep">·</span>
-      <span class="brand-crusher">Bitcoin Crusher</span>
+      <span class="brand-crusher">Radio Crusher</span>
     </div>
     <div class="header-right">
+      <span class="header-token-badge" id="header-token-badge" title="Your spendable token balance">
+        💰&nbsp;<span id="header-token-balance">0</span>
+      </span>
       <span class="user-name">Kris</span>
       <button class="sign-out-btn">Sign Out</button>
     </div>
@@ -27,36 +51,31 @@
 
   <main class="main">
 
-    <!-- ── Slot Machine Section ────────────────────────────────────────── -->
-    <section class="slot-section">
-      <h1 class="section-title">∞ Infinity Slot Machine</h1>
+    <!-- ── Radio Crusher Section ─────────────────────────────────────────── -->
+    <section class="slot-section" id="slot-section">
+      <h1 class="section-title">📻 Infinity Radio Crusher</h1>
       <p class="section-desc">
-        Spin the reels. Crush Bitcoin. Every spin generates a unique scientific
-        research token committed forever to the repo.
+        Spin the dials. Tune the universe. Every spin locks onto a live radio channel
+        and mints a unique scientific research token committed to the repo forever.
       </p>
 
-      <!-- Flow steps -->
       <div class="flow-steps" aria-label="Spin flow">
-        <span class="flow-step">🟡 Spin</span>
+        <span class="flow-step">📻 Spin</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">👑 Token</span>
+        <span class="flow-step">🎙️ Tune</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">🔬 Research</span>
+        <span class="flow-step">🔬 Token</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">🦾 Commit</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">💰 Value</span>
       </div>
 
-      <!-- Bitcoin Crusher display card -->
       <div class="crusher-display">
-        <div class="crusher-title">💎 BITCOIN CRUSHER 💎</div>
-        <div class="crusher-status" id="slot-status">
-          EVERY SPIN GENERATES A SCIENTIFIC RESEARCH TOKEN
-        </div>
+        <div class="crusher-title">📻 RADIO CRUSHER 📻</div>
+        <div class="crusher-status" id="slot-status">SPIN THE DIALS — TUNE INTO ANY FREQUENCY</div>
         <div class="win-indicator" id="win-indicator"></div>
 
-        <!-- Spin counter -->
         <div class="counters-row">
           <div class="counter">
             <div class="counter-label">SPINS</div>
@@ -64,19 +83,22 @@
           </div>
         </div>
 
-        <!-- Reel cells -->
-        <div class="reels-container" role="img" aria-label="Slot machine reels">
-          <div class="reel-cell" id="reel-0">🎰</div>
-          <div class="reel-cell" id="reel-1">🎰</div>
-          <div class="reel-cell" id="reel-2">🎰</div>
+        <div class="reels-container" role="img" aria-label="Radio channel dials">
+          <div class="reel-cell" id="reel-0">📻</div>
+          <div class="reel-cell" id="reel-1">📻</div>
+          <div class="reel-cell" id="reel-2">📻</div>
         </div>
 
-        <!-- Spin button -->
+        <div class="reel-labels-row">
+          <div class="reel-label" id="reel-label-0"></div>
+          <div class="reel-label" id="reel-label-1"></div>
+          <div class="reel-label" id="reel-label-2"></div>
+        </div>
+
         <div class="spin-area">
-          <button class="spin-btn" id="spin-btn">🎰 SPIN &amp; CRUSH</button>
+          <button class="spin-btn" id="spin-btn">📻 SPIN THE DIAL</button>
         </div>
 
-        <!-- Score counter -->
         <div class="score-row">
           <div class="counter">
             <div class="counter-label">SCORE</div>
@@ -84,10 +106,24 @@
           </div>
         </div>
       </div>
+
+      <!-- Now Tuned To card -->
+      <div class="tuned-card" id="tuned-card" style="display:none" aria-live="polite">
+        <div class="tuned-card-header">
+          <span class="tuned-icon" id="tuned-icon">📻</span>
+          <div>
+            <div class="tuned-label">NOW TUNED TO</div>
+            <div class="tuned-name" id="tuned-name">—</div>
+            <div class="tuned-genre" id="tuned-genre"></div>
+          </div>
+        </div>
+        <div class="tuned-desc" id="tuned-desc"></div>
+        <div class="tuned-links" id="tuned-links"></div>
+      </div>
     </section>
 
-    <!-- ── Research Token Section ──────────────────────────────────────── -->
-    <section class="token-section" aria-label="Latest research token">
+    <!-- ── Research Token Section ─────────────────────────────────────────── -->
+    <section class="token-section" id="token-section" aria-label="Latest research token">
       <div class="token-header">
         <span class="token-label">🔬 Latest Research Token</span>
         <span class="token-if" id="token-if"></span>
@@ -97,61 +133,161 @@
         <button class="article-btn" id="article-toggle">📄 Full Article</button>
       </div>
 
-      <div class="token-title"   id="token-title">Spin the reels to generate a research token.</div>
-      <div class="token-authors" id="token-authors"></div>
-      <div class="token-journal" id="token-journal"></div>
-      <div class="token-doi"     id="token-doi"></div>
+      <div class="token-title"    id="token-title">Spin the dials to generate a research token.</div>
+      <div class="token-authors"  id="token-authors"></div>
+      <div class="token-journal"  id="token-journal"></div>
+      <div class="token-doi"      id="token-doi"></div>
       <div class="token-keywords" id="token-keywords"></div>
       <div class="token-abstract" id="token-abstract"></div>
 
-      <!-- Full article (hidden by default) -->
       <div class="full-article" id="full-article" style="display:none">
         <div class="article-search-enriched" id="search-enriched-badge" style="display:none">
           🌐 Search Enriched
         </div>
         <div class="article-meta" id="article-meta"></div>
-
         <h3>Abstract</h3>
         <p id="full-abstract"></p>
-
         <h3>1. Introduction</h3>
         <p id="section-intro"></p>
-
         <h3>2. Materials &amp; Methods</h3>
         <p id="section-methods"></p>
-
         <h3>3. Results</h3>
         <p id="section-results"></p>
-
         <h3>4. Discussion</h3>
         <p id="section-discussion"></p>
-
         <h3>5. Conclusion</h3>
         <p id="section-conclusion"></p>
-
         <h3>References</h3>
         <ol class="references" id="references"></ol>
       </div>
     </section>
 
-    <!-- ── AI Chat Section ─────────────────────────────────────────────── -->
-    <section class="chat-section" aria-label="Research AI Chat">
+    <!-- ── Token Wallet Section ───────────────────────────────────────────── -->
+    <section class="wallet-section" id="wallet-section" aria-label="Token Wallet">
+      <div class="wallet-header">
+        <span class="wallet-label">💰 Token Wallet</span>
+        <span class="wallet-sub">Earn 1 token / hour · spend only in the Marketplace · cannot be bought</span>
+      </div>
+
+      <div class="wallet-balance-row">
+        <div class="wallet-balance-card">
+          <div class="wallet-balance-label">SPENDABLE</div>
+          <div class="wallet-balance-value" id="wallet-balance">0</div>
+          <div class="wallet-balance-sub">tokens · <span id="wallet-next-grant">checking…</span></div>
+        </div>
+        <div class="wallet-balance-card">
+          <div class="wallet-balance-label">MINTED</div>
+          <div class="wallet-balance-value" id="wallet-minted-count">0</div>
+          <div class="wallet-balance-sub">from spins</div>
+        </div>
+        <div class="wallet-balance-card">
+          <div class="wallet-balance-label">SPENT</div>
+          <div class="wallet-balance-value" id="wallet-total-spent">0</div>
+          <div class="wallet-balance-sub">in marketplace</div>
+        </div>
+      </div>
+
+      <div class="wallet-tokens-header">🔬 Minted Research Tokens</div>
+      <div class="wallet-tokens-list" id="wallet-tokens-list">
+        <div class="wallet-empty">No tokens minted yet. Spin the dials!</div>
+      </div>
+    </section>
+
+    <!-- ── Token Marketplace Section ─────────────────────────────────────── -->
+    <section class="market-section" id="market-section" aria-label="Token Marketplace">
+      <div class="market-header">
+        <div>
+          <span class="market-label">🛒 Token Marketplace</span>
+          <span class="market-sub">Buy &amp; sell with tokens only — tokens cannot be purchased with real money</span>
+        </div>
+        <div class="market-balance-display">
+          <span class="market-balance-label">Balance:</span>
+          <span class="market-balance-val" id="market-balance">0</span>
+          <span class="market-balance-unit">tokens</span>
+        </div>
+      </div>
+
+      <div class="market-msg" id="market-msg" role="alert" aria-live="polite"></div>
+
+      <div class="market-list-bar">
+        <button class="market-list-toggle-btn" id="market-list-toggle">➕ List an Item</button>
+      </div>
+
+      <div class="list-form-wrap" id="list-form-wrap" style="display:none">
+        <form class="list-form" id="list-form" novalidate>
+          <div class="list-form-title">📦 Create a New Listing</div>
+          <div class="list-form-row">
+            <div class="list-form-group" style="flex:1">
+              <label class="list-label" for="list-category">Category</label>
+              <select class="list-input list-select" id="list-category" required>
+                <option value="coin">🪙 Coin</option>
+                <option value="collectible">🏺 Collectible</option>
+                <option value="digital">💾 Digital</option>
+                <option value="other">📦 Other</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:0.45rem;margin-left:1rem">
+              <span class="list-icon-preview" id="list-icon-preview">🪙</span>
+            </div>
+          </div>
+          <div class="list-form-group">
+            <label class="list-label" for="list-title">Item Title</label>
+            <input class="list-input" id="list-title" type="text"
+              placeholder="e.g. 1921 Morgan Silver Dollar" maxlength="100" required />
+          </div>
+          <div class="list-form-group">
+            <label class="list-label" for="list-desc">Description</label>
+            <textarea class="list-input list-textarea" id="list-desc"
+              placeholder="Describe your item…" rows="3" maxlength="300"></textarea>
+          </div>
+          <div class="list-form-group" style="max-width:160px">
+            <label class="list-label" for="list-price">Price (tokens)</label>
+            <input class="list-input" id="list-price" type="number"
+              min="1" max="9999" placeholder="15" required />
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:0.5rem">
+            <button type="submit" class="list-submit-btn">🚀 Publish Listing</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="market-filters" role="group" aria-label="Filter listings">
+        <button class="market-filter-btn active" data-filter="all">All</button>
+        <button class="market-filter-btn" data-filter="available">Available</button>
+        <button class="market-filter-btn" data-filter="mine">My Listings</button>
+        <button class="market-filter-btn" data-filter="sold">Sold</button>
+      </div>
+
+      <div class="market-listings" id="market-listings">
+        <div class="market-empty">Loading marketplace…</div>
+      </div>
+    </section>
+
+    <!-- ── AI Chat Section ────────────────────────────────────────────────── -->
+    <section class="chat-section" id="chat-section" aria-label="Research AI Chat">
       <div class="chat-header">
-        <span>🤖 Research AI Chat</span>
+        <div class="chat-header-left">
+          <span>🤖 Research AI</span>
+          <span class="chat-ai-badge" id="chat-ai-badge">⚡ DDG + Reasoning</span>
+        </div>
         <div class="chat-links">
           <a href="https://duckduckgo.com" target="_blank" rel="noopener noreferrer">DuckDuckGo</a>
           <span>·</span>
           <a href="https://archive.org" target="_blank" rel="noopener noreferrer">Archive.org</a>
           <span>·</span>
-          <a href="https://www.science.gov" target="_blank" rel="noopener noreferrer">Science</a>
+          <a href="https://www.science.gov" target="_blank" rel="noopener noreferrer">Science.gov</a>
         </div>
+      </div>
+
+      <div class="chat-reasoning" id="chat-reasoning" aria-live="polite" style="display:none">
+        <div class="chat-reasoning-steps" id="chat-reasoning-steps"></div>
       </div>
 
       <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
         <div class="chat-msg ai-msg">
-          🤖 Hello! I am the Infinity Research AI. Ask me about science, cryptography,
-          materials, quantum physics, or anything else. I will cross-reference the
-          current research token and find you relevant links.
+          🤖 Hello! I'm the Infinity Research AI. I search <strong>DuckDuckGo</strong> for real
+          answers, then build a logical response grounded in those results.
+          Ask me about radio channels, science, Bitcoin, the marketplace — anything!
         </div>
       </div>
 
@@ -160,7 +296,7 @@
           type="text"
           class="chat-input"
           id="chat-input"
-          placeholder="Ask the research AI…"
+          placeholder="Ask anything…"
           aria-label="Chat message"
           autocomplete="off"
         />
@@ -171,6 +307,9 @@
   </main>
 
   <script src="js/token-generator.js"></script>
+  <script src="js/wallet.js"></script>
+  <script src="js/marketplace.js"></script>
+  <script src="js/chat.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

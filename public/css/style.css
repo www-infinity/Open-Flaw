@@ -398,3 +398,306 @@ body {
   .header-center   { font-size: 0.78rem; }
   .reel-cell       { width: 72px; height: 72px; font-size: 1.9rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Sidebar ──────────────────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+.sidebar-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.62);
+  z-index: 199;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.sidebar-overlay.sidebar-overlay-visible { opacity: 1; pointer-events: all; }
+
+.sidebar {
+  position: fixed; top: 0; left: 0; height: 100%; width: 260px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  z-index: 200;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+}
+.sidebar.sidebar-open { transform: translateX(0); }
+
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card-2);
+}
+.sidebar-title { color: var(--gold); font-weight: 700; font-size: 0.95rem; }
+.sidebar-close-btn { font-size: 1.05rem; color: var(--text-dim); }
+.sidebar-close-btn:hover { color: var(--text); }
+
+.sidebar-nav { list-style: none; padding: 0.6rem 0; flex: 1; }
+.sidebar-link {
+  display: block; padding: 0.75rem 1.5rem;
+  color: var(--text); text-decoration: none; font-size: 0.92rem;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-link:hover { background: var(--bg-card-2); color: var(--gold); }
+
+.sidebar-footer {
+  padding: 0.85rem 1.5rem;
+  font-size: 0.72rem; color: var(--text-dim); line-height: 1.55;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Header token badge ─────────────────────────────────────────────────── */
+.header-token-badge {
+  font-family: var(--mono); font-size: 0.8rem; color: var(--gold);
+  background: rgba(245,197,24,0.1);
+  border: 1px solid rgba(245,197,24,0.3);
+  border-radius: 6px; padding: 0.18rem 0.55rem; cursor: default;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Radio Crusher ─────────────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+.reel-labels-row {
+  display: flex; justify-content: center; gap: 1rem;
+  margin-top: -0.6rem; margin-bottom: 0.4rem;
+}
+.reel-label {
+  width: 88px; text-align: center;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.05em;
+  color: var(--gold); min-height: 1em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Tuned card */
+.tuned-card {
+  margin-top: 1.25rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  animation: tuned-in 0.35s ease;
+}
+.tuned-card-lock { border: 2px solid var(--green); box-shadow: 0 0 24px rgba(0,230,118,0.15); }
+.tuned-card-scan { border: 1px solid var(--border); }
+@keyframes tuned-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+.tuned-card-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 0.6rem;
+}
+.tuned-icon   { font-size: 2.6rem; line-height: 1; }
+.tuned-label  { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.18em; }
+.tuned-name   { font-size: 1.15rem; font-weight: 700; color: var(--gold); }
+.tuned-genre  { font-size: 0.78rem; color: var(--cyan); margin-top: 0.1rem; }
+.tuned-desc   { font-size: 0.82rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 0.85rem; }
+.tuned-links  { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tuned-link {
+  display: inline-block;
+  background: var(--bg-card-2); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--cyan); font-size: 0.78rem; padding: 0.28rem 0.75rem;
+  text-decoration: none; transition: border-color 0.15s, color 0.15s;
+}
+.tuned-link:hover { border-color: var(--cyan); color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Token Wallet ──────────────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+.wallet-section {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem 1.5rem;
+}
+.wallet-header {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
+}
+.wallet-label { font-size: 0.9rem; font-weight: 600; color: var(--gold); }
+.wallet-sub   { font-size: 0.75rem; color: var(--text-dim); }
+
+.wallet-balance-row   { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.wallet-balance-card  {
+  flex: 1; min-width: 110px;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.9rem; text-align: center;
+}
+.wallet-balance-label {
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.18em;
+  color: var(--text-dim); margin-bottom: 0.25rem;
+}
+.wallet-balance-value {
+  font-family: var(--mono); font-size: 2rem; font-weight: bold;
+  color: var(--gold); line-height: 1; margin-bottom: 0.25rem;
+}
+.wallet-balance-sub { font-size: 0.68rem; color: var(--text-dim); }
+
+.wallet-tokens-header {
+  font-size: 0.82rem; color: var(--cyan); font-weight: 600; margin-bottom: 0.55rem;
+}
+.wallet-tokens-list { max-height: 220px; overflow-y: auto; }
+.wallet-token-item {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.45rem;
+  padding: 0.38rem 0; border-bottom: 1px solid rgba(42,42,74,0.4); font-size: 0.77rem;
+}
+.wallet-token-spin    { font-family: var(--mono); color: var(--gold); font-size: 0.7rem; flex-shrink: 0; }
+.wallet-token-channel { font-size: 1rem; flex-shrink: 0; }
+.wallet-token-title   { color: var(--text); flex: 1; min-width: 0; }
+.wallet-token-doi     { font-family: var(--mono); font-size: 0.67rem; color: var(--cyan); flex-shrink: 0; }
+.wallet-empty         { color: var(--text-dim); font-size: 0.82rem; padding: 1rem 0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Token Marketplace ─────────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+.market-section {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem 1.5rem;
+}
+.market-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;
+}
+.market-label { font-size: 0.9rem; font-weight: 600; color: var(--gold); display: block; margin-bottom: 0.2rem; }
+.market-sub   { font-size: 0.73rem; color: var(--text-dim); }
+
+.market-balance-display {
+  display: flex; align-items: center; gap: 0.3rem;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.38rem 0.85rem; white-space: nowrap;
+}
+.market-balance-label { font-size: 0.72rem; color: var(--text-dim); }
+.market-balance-val   { font-family: var(--mono); font-size: 1.1rem; font-weight: bold; color: var(--gold); }
+.market-balance-unit  { font-size: 0.68rem; color: var(--text-dim); }
+
+.market-msg           { min-height: 1.6em; font-size: 0.82rem; border-radius: 6px; padding: 0 0.4rem; margin-bottom: 0.4rem; }
+.market-msg-ok        { color: var(--green); }
+.market-msg-fail      { color: var(--red); }
+
+.market-list-bar      { margin-bottom: 0.75rem; }
+.market-list-toggle-btn {
+  background: none; border: 1px solid var(--gold); border-radius: 6px;
+  color: var(--gold); cursor: pointer; font-size: 0.82rem; padding: 0.32rem 0.9rem;
+  transition: background 0.15s;
+}
+.market-list-toggle-btn:hover { background: rgba(245,197,24,0.1); }
+
+/* Listing form */
+.list-form-wrap {
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.2rem; margin-bottom: 1.1rem;
+}
+.list-form-title { font-size: 0.88rem; font-weight: 600; color: var(--cyan); margin-bottom: 0.9rem; }
+.list-form-row   { display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 0.75rem; }
+.list-form-group { display: flex; flex-direction: column; gap: 0.28rem; margin-bottom: 0.65rem; }
+.list-label      { font-size: 0.72rem; color: var(--text-dim); }
+.list-input {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-size: 0.84rem; padding: 0.42rem 0.7rem;
+  outline: none; transition: border-color 0.15s; width: 100%;
+}
+.list-input:focus { border-color: var(--cyan); }
+.list-textarea    { resize: vertical; font-family: inherit; }
+.list-select      { cursor: pointer; }
+.list-icon-preview { font-size: 2rem; }
+.list-submit-btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border: none; border-radius: 8px; color: #000;
+  cursor: pointer; font-size: 0.88rem; font-weight: 700;
+  padding: 0.55rem 1.6rem; transition: transform 0.15s, box-shadow 0.15s;
+}
+.list-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 0 16px rgba(245,197,24,0.4); }
+
+/* Filter buttons */
+.market-filters { display: flex; gap: 0.38rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.market-filter-btn {
+  background: none; border: 1px solid var(--border); border-radius: 20px;
+  color: var(--text-dim); cursor: pointer; font-size: 0.77rem;
+  padding: 0.22rem 0.8rem; transition: all 0.15s;
+}
+.market-filter-btn:hover       { border-color: var(--gold); color: var(--gold); }
+.market-filter-btn.active      { background: var(--gold); border-color: var(--gold); color: #000; font-weight: 600; }
+
+/* Listing cards */
+.market-listings {
+  display: flex; flex-direction: column; gap: 0.65rem;
+  max-height: 640px; overflow-y: auto;
+}
+.market-empty { color: var(--text-dim); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
+.market-card {
+  display: flex; gap: 0.9rem; align-items: flex-start;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.9rem; transition: border-color 0.15s;
+}
+.market-card:hover            { border-color: rgba(245,197,24,0.3); }
+.market-card-sold             { opacity: 0.5; }
+.market-card-icon             { font-size: 2.2rem; flex-shrink: 0; line-height: 1; padding-top: 0.1rem; }
+.market-card-body             { flex: 1; min-width: 0; }
+.market-card-title            { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.28rem; }
+.market-card-desc             { font-size: 0.77rem; color: var(--text-dim); margin-bottom: 0.45rem; line-height: 1.5; }
+.market-card-meta             { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+.market-tag   { font-size: 0.67rem; padding: 0.08rem 0.42rem; border-radius: 4px; }
+.market-tag-coin        { background: rgba(245,197,24,0.1); color: var(--gold); border: 1px solid rgba(245,197,24,0.28); }
+.market-tag-collectible { background: rgba(0,212,255,0.08); color: var(--cyan); border: 1px solid rgba(0,212,255,0.22); }
+.market-tag-digital     { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.22); }
+.market-tag-other       { background: rgba(128,128,160,0.1); color: var(--text-dim); border: 1px solid var(--border); }
+.market-seller { font-size: 0.7rem; color: var(--text-dim); }
+.market-date   { font-size: 0.67rem; color: var(--text-dim); }
+
+.market-card-side {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 0.45rem;
+}
+.market-price      { text-align: right; }
+.market-price-val  { font-family: var(--mono); font-size: 1.45rem; font-weight: bold; color: var(--gold); }
+.market-price-unit { font-size: 0.68rem; color: var(--text-dim); margin-left: 0.18rem; }
+.market-buy-btn {
+  background: var(--green); border: none; border-radius: 6px; color: #000;
+  cursor: pointer; font-size: 0.8rem; font-weight: 700; padding: 0.38rem 0.85rem;
+  transition: transform 0.1s, box-shadow 0.1s; white-space: nowrap;
+}
+.market-buy-btn:hover              { transform: translateY(-1px); box-shadow: 0 0 12px rgba(0,230,118,0.35); }
+.market-buy-disabled               { background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); cursor: not-allowed; }
+.market-buy-disabled:hover         { transform: none; box-shadow: none; }
+.market-sold-badge {
+  font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.18rem 0.5rem; letter-spacing: 0.08em;
+}
+.market-own-badge {
+  font-size: 0.7rem; color: var(--cyan); background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2); border-radius: 4px; padding: 0.18rem 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Chat enhancements ─────────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+.chat-header-left   { display: flex; align-items: center; gap: 0.6rem; }
+.chat-ai-badge {
+  font-size: 0.67rem; border-radius: 4px; padding: 0.1rem 0.48rem;
+  background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.28); color: var(--green);
+}
+.chat-ai-badge.badge-gemma {
+  background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.28); color: var(--cyan);
+}
+
+.chat-reasoning {
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 0.55rem 1rem; font-family: var(--mono); font-size: 0.7rem;
+}
+.chat-reasoning-steps { display: flex; flex-direction: column; gap: 0.22rem; }
+.reasoning-step {
+  color: var(--text-dim); opacity: 0;
+  animation: step-in 0.28s ease forwards;
+}
+@keyframes step-in {
+  from { opacity:0; transform:translateX(-6px); }
+  to   { opacity:1; transform:none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ── Responsive additions ──────────────────────────────────────────────────
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 580px) {
+  .reel-label           { width: 72px; font-size: 0.55rem; }
+  .tuned-card-header    { gap: 0.65rem; }
+  .tuned-icon           { font-size: 2rem; }
+  .tuned-name           { font-size: 0.98rem; }
+  .market-card          { flex-wrap: wrap; }
+  .market-card-side     { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+  .wallet-balance-value { font-size: 1.55rem; }
+  .header-center        { display: none; }
+}
