@@ -11,14 +11,16 @@ const InfinityChat = (() => {
 
   // ── System prompt for the LLM ─────────────────────────────────────────────
   const SYSTEM_PROMPT =
-    'You are the Infinity Research AI for the ∞ Infinity System — an avant-garde radio-themed ' +
-    'research platform built by www-infinity. You speak naturally, warmly, and intelligently ' +
-    'like a brilliant friend who loves science, radio, Bitcoin, cryptography, and the cosmos. ' +
-    'Be conversational, insightful, and occasionally witty. When given DuckDuckGo search results, ' +
-    'synthesise them into a coherent answer and cite sources inline. Keep answers concise but complete. ' +
-    'Topics you excel at: radio channels (shortwave, FM, AM, ham, scanner), scientific research, ' +
-    'Bitcoin & blockchain, quantum computing, cryptography, the Token Marketplace, and the ' +
-    '∞ Infinity System itself.';
+    'You are the Infinity AI — a sharp, cool, deeply knowledgeable companion inside the ∞ Infinity System, ' +
+    'a live radio-research platform built by www-infinity. ' +
+    'Talk like a brilliant, real human — not a robot. Be direct, confident, and occasionally drop something ' +
+    'unexpected or witty. No filler phrases like "Certainly!" or "Great question!". Just dive straight in. ' +
+    'When you get DuckDuckGo search results, weave them naturally into your answer and cite sources inline. ' +
+    'Keep answers tight but meaty — no waffle, no bullet-point walls. ' +
+    'You know everything about: live radio (shortwave, FM, AM, ham, scanner, worldwide streams), ' +
+    'scientific research, Bitcoin & blockchain, quantum computing, cryptography, the Token Marketplace, ' +
+    'the ∞ Infinity System itself, music genres, and whatever the user throws at you. ' +
+    'You are always researching, always curious, always real.';
 
   // ── Tier 1 — Server-side LLM via /api/ai (API key kept server-side) ─────────
   async function callServerLLM(userMsg, facts, tokenContext) {
@@ -95,16 +97,16 @@ const InfinityChat = (() => {
   function domainFallback(query, ctx) {
     const q = query.toLowerCase();
     if (/bitcoin|btc|blockchain/.test(q))
-      return '🤖 Bitcoin uses SHA-256 proof-of-work secured by a Merkle tree blockchain. Each block contains a cryptographic hash of the previous block, making the ledger tamper-evident. The Lightning Network adds fast off-chain payments.';
+      return '😎 Bitcoin uses SHA-256 proof-of-work secured by a Merkle tree blockchain. Each block contains a cryptographic hash of the previous block, making the ledger tamper-evident. The Lightning Network adds fast off-chain payments.';
     if (/quantum/.test(q))
-      return '🤖 Quantum computing exploits superposition and entanglement for computation. Key metrics are qubit coherence time, gate fidelity, and quantum volume. Surface codes provide error correction for fault-tolerant gates.';
+      return '😎 Quantum computing exploits superposition and entanglement for computation. Key metrics are qubit coherence time, gate fidelity, and quantum volume. Surface codes provide error correction for fault-tolerant gates.';
     if (/jazz|radio|shortwave|fm|am|ham/.test(q))
-      return '🤖 Radio channels range from AM (530–1700 kHz) through FM (87.5–108 MHz) to shortwave (1.7–30 MHz) and digital DAB. Ham operators use licensed bands across HF, VHF, and UHF for long-distance communication.';
+      return '😎 Radio channels range from AM (530–1700 kHz) through FM (87.5–108 MHz) to shortwave (1.7–30 MHz) and digital DAB. Ham operators use licensed bands across HF, VHF, and UHF for long-distance communication.';
     if (/token|wallet|marketplace|spend/.test(q))
-      return '🤖 Infinity tokens are earned at 1 per hour just by having the app open. They accumulate in your Wallet and can be spent in the Marketplace to buy rare coins, collectibles, and digital items. Tokens have no monetary value — they\'re earned, not bought.';
+      return '😎 Infinity tokens are earned at 1 per hour just by having the app open. They accumulate in your Wallet and can be spent in the Marketplace to buy rare coins, collectibles, and digital items. Tokens have no monetary value — they\'re earned, not bought.';
     if (ctx)
-      return `🤖 Based on the current research token "<em>${ctx.title.substring(0, 55)}…</em>", key topics include ${(ctx.keywords || ctx.fieldTags || []).slice(0, 2).join(' and ')}. Spin the Radio Crusher to generate more tokens!`;
-    return '🤖 I didn\'t find a direct answer. Try rephrasing or check DuckDuckGo directly.';
+      return `😎 Based on the current research token "<em>${ctx.title.substring(0, 55)}…</em>", key topics include ${(ctx.keywords || ctx.fieldTags || []).slice(0, 2).join(' and ')}. Spin the Radio Crusher to generate more tokens!`;
+    return '😎 I didn\'t find a direct answer. Try rephrasing or check DuckDuckGo directly.';
   }
 
   // ── Reasoning chain builder (tier 3) ─────────────────────────────────────
@@ -115,7 +117,7 @@ const InfinityChat = (() => {
     let html = '';
     if (facts.length > 0) {
       const primary = facts[0];
-      html += `🤖 ${esc(primary.text.slice(0, MAX_PRIMARY_TEXT))}${primary.text.length > MAX_PRIMARY_TEXT ? '…' : ''}`;
+      html += `😎 ${esc(primary.text.slice(0, MAX_PRIMARY_TEXT))}${primary.text.length > MAX_PRIMARY_TEXT ? '…' : ''}`;
       if (facts[1]) html += `\n\n📚 <em>${esc(facts[1].text.slice(0, MAX_RELATED_TEXT))}</em>`;
       const links = facts.filter(f => f.url).slice(0, 2);
       if (links.length)
@@ -198,7 +200,7 @@ const InfinityChat = (() => {
 
     if (llmReply) {
       const ddgUrl = `https://duckduckgo.com/?q=${encodeURIComponent(userMsg)}`;
-      html   = '🤖 ' + esc(llmReply)
+      html   = '😎 ' + esc(llmReply)
         .replace(/\n\n/g, '<br><br>')
         .replace(/\n/g, '<br>');
       html  += `<br><br><a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
@@ -221,7 +223,7 @@ const InfinityChat = (() => {
           const prompt = `User: ${userMsg}${searchCtx}${tokCtx}\n\nAnswer naturally, cite sources.`;
           const raw    = await aiSession.prompt(prompt);
           const ddgUrl = `https://duckduckgo.com/?q=${encodeURIComponent(userMsg)}`;
-          html   = `🤖 ${esc(raw)}\n\n<a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
+          html   = `😎 ${esc(raw)}\n\n<a href="${ddgUrl}" target="_blank" rel="noopener noreferrer">🦆 More on DuckDuckGo ↗</a>`;
           source = 'gemma';
           steps.push('✅ Gemma response ready');
         } catch (e) {

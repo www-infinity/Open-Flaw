@@ -888,3 +888,58 @@ body {
   border-color: var(--gold);
   color: var(--gold);
 }
+
+/* ── Radio player (inside tuned card) ──────────────────────────────────────── */
+.radio-player {
+  margin-top: 0.85rem;
+  background: rgba(0, 212, 255, 0.06);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+}
+.radio-player-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.radio-station-name {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--cyan);
+  font-weight: 700;
+  flex: 1;
+}
+.radio-status {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.radio-controls {
+  display: flex;
+  gap: 0.4rem;
+}
+.radio-btn {
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 6px;
+  color: var(--cyan);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.65rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+.radio-btn:hover {
+  background: rgba(0, 212, 255, 0.22);
+  border-color: var(--cyan);
+}
+.radio-stop-btn { color: var(--red); border-color: rgba(255, 68, 68, 0.35); background: rgba(255,68,68,0.06); }
+.radio-stop-btn:hover { background: rgba(255,68,68,0.18); border-color: var(--red); }
+
+/* ── Auto-research chat messages ─────────────────────────────────────────── */
+.auto-research-msg {
+  border-left: 2px solid var(--gold);
+  background: rgba(245, 197, 24, 0.04);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}

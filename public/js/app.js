@@ -10,6 +10,7 @@
       icon: '🎷', name: 'Jazz',
       genre: 'Jazz · Bebop · Big Band',
       desc: 'Smooth jazz, bebop classics, and live big band sessions from around the world.',
+      streamUrl: 'https://ice1.somafm.com/7soul-128-mp3',
       links: [
         { label: 'Jazz24 Live', url: 'https://jazz24.org/' },
         { label: 'TuneIn Jazz', url: 'https://tunein.com/radio/Jazz-r15923/' },
@@ -20,6 +21,7 @@
       icon: '🎨', name: 'Masterpiece',
       genre: 'Classical · Orchestral',
       desc: 'Full orchestral works, chamber music, and opera from the world\'s great concert halls.',
+      streamUrl: 'https://ice1.somafm.com/thistle-128-mp3',
       links: [
         { label: 'Classical Radio', url: 'https://www.classicalradio.com/' },
         { label: 'Radio Paradise Mellow', url: 'https://radioparadise.com/radio/mellow-mix' },
@@ -40,6 +42,7 @@
       icon: '😎', name: 'Cool',
       genre: 'Chill · Groove · Lo-Fi',
       desc: 'Laid-back grooves, lo-fi hip-hop, and chilled electronic beats for focused minds.',
+      streamUrl: 'https://ice1.somafm.com/groovesalad-128-mp3',
       links: [
         { label: 'SomaFM Groove Salad', url: 'https://somafm.com/groovesalad/' },
         { label: 'Lofi.cafe', url: 'https://lofi.cafe/' },
@@ -50,6 +53,7 @@
       icon: '🛸', name: 'Alien',
       genre: 'Space · Ambient · Experimental',
       desc: 'Deep space ambient, experimental electronic, and transmissions from beyond the ionosphere.',
+      streamUrl: 'https://ice1.somafm.com/spacestation-128-mp3',
       links: [
         { label: 'SomaFM Space Station', url: 'https://somafm.com/spacestation/' },
         { label: 'SomaFM Drone Zone', url: 'https://somafm.com/dronezone/' },
@@ -60,6 +64,7 @@
       icon: '👌', name: 'Top Notch',
       genre: 'Premium · Adult Contemporary',
       desc: 'The finest curated adult contemporary and AAA music — handpicked quality.',
+      streamUrl: 'https://stream.radioparadise.com/mp3-128',
       links: [
         { label: 'Radio Paradise', url: 'https://radioparadise.com/' },
         { label: 'BBC Radio 2', url: 'https://www.bbc.co.uk/sounds/play/live:bbc_radio_two' },
@@ -70,6 +75,7 @@
       icon: '⭐', name: 'Trendy',
       genre: 'Pop · Top 40 · Hot Hits',
       desc: 'Today\'s chart-toppers, trending tracks, and the freshest pop hits.',
+      streamUrl: 'https://ice1.somafm.com/indiepop-128-mp3',
       links: [
         { label: 'BBC Radio 1', url: 'https://www.bbc.co.uk/sounds/play/live:bbc_radio_one' },
         { label: 'iHeart Top 40', url: 'https://www.iheart.com/live/iheartradio-top-40-7556/' },
@@ -80,6 +86,7 @@
       icon: '💃', name: 'Dance',
       genre: 'Dance · EDM · House',
       desc: 'Non-stop dance floor energy — house, techno, trance, and EDM.',
+      streamUrl: 'https://ice1.somafm.com/fluid-128-mp3',
       links: [
         { label: 'SomaFM Fluid', url: 'https://somafm.com/fluid/' },
         { label: 'Ibiza Global Radio', url: 'https://www.ibizaglobalradio.com/listen-live/' },
@@ -90,6 +97,7 @@
       icon: '♥️', name: 'Love',
       genre: 'Romantic · R&B · Soul',
       desc: 'Timeless love songs, smooth R&B, and soul classics for every mood.',
+      streamUrl: 'https://ice1.somafm.com/lush-128-mp3',
       links: [
         { label: 'Heart Radio UK', url: 'https://www.heart.co.uk/listen/' },
         { label: 'SmoothFM', url: 'https://www.smoothfm.com.au/listen/' },
@@ -246,6 +254,13 @@
     chatInput:      $('chat-input'),
     chatSend:       $('chat-send'),
     chatTyping:     $('chat-typing'),
+    // Radio player
+    radioPlayer:    $('radio-player'),
+    radioAudio:     $('radio-audio'),
+    radioPlayBtn:   $('radio-play-btn'),
+    radioStopBtn:   $('radio-stop-btn'),
+    radioStationName: $('radio-station-name'),
+    radioStatus:    $('radio-status'),
   };
 
   // ── Hamburger menu ─────────────────────────────────────────────────────────
@@ -324,6 +339,66 @@
     els.tunedLinks.innerHTML    = channel.links
       .map(l => `<a class="tuned-link" href="${l.url}" target="_blank" rel="noopener noreferrer">🔗 ${l.label} ↗</a>`)
       .join('');
+    // Start radio stream if available
+    if (channel.streamUrl) {
+      tuneRadio(channel);
+    } else {
+      stopRadio();
+    }
+  }
+
+  // ── Radio audio player ─────────────────────────────────────────────────────
+  let currentStreamUrl = null;
+
+  function tuneRadio(channel) {
+    if (!els.radioAudio || !els.radioPlayer) return;
+    if (currentStreamUrl === channel.streamUrl && !els.radioAudio.paused) return;
+    currentStreamUrl = channel.streamUrl;
+    els.radioAudio.pause();
+    els.radioAudio.src = channel.streamUrl;
+    els.radioPlayer.style.display = 'flex';
+    if (els.radioStationName) els.radioStationName.textContent = `${channel.icon} ${channel.name}`;
+    if (els.radioStatus) els.radioStatus.textContent = 'Connecting…';
+    els.radioAudio.load();
+    els.radioAudio.play().then(() => {
+      if (els.radioStatus) els.radioStatus.textContent = '▶ Live';
+      if (els.radioPlayBtn) els.radioPlayBtn.textContent = '⏸';
+    }).catch(err => {
+      console.warn('[∞ Radio] Autoplay blocked, click ▶ to start:', err.message);
+      if (els.radioStatus) els.radioStatus.textContent = 'Click ▶ to stream';
+      if (els.radioPlayBtn) els.radioPlayBtn.textContent = '▶';
+    });
+  }
+
+  function stopRadio() {
+    if (!els.radioAudio) return;
+    els.radioAudio.pause();
+    els.radioAudio.src = '';
+    currentStreamUrl = null;
+    if (els.radioStatus) els.radioStatus.textContent = 'Stopped';
+    if (els.radioPlayBtn) els.radioPlayBtn.textContent = '▶';
+  }
+
+  if (els.radioPlayBtn) {
+    els.radioPlayBtn.addEventListener('click', () => {
+      if (!els.radioAudio) return;
+      if (els.radioAudio.paused) {
+        els.radioAudio.play().then(() => {
+          if (els.radioStatus) els.radioStatus.textContent = '▶ Live';
+          els.radioPlayBtn.textContent = '⏸';
+        }).catch(err => {
+          console.warn('[∞ Radio] Play failed:', err.message);
+        });
+      } else {
+        els.radioAudio.pause();
+        if (els.radioStatus) els.radioStatus.textContent = 'Paused';
+        els.radioPlayBtn.textContent = '▶';
+      }
+    });
+  }
+
+  if (els.radioStopBtn) {
+    els.radioStopBtn.addEventListener('click', stopRadio);
   }
 
   // ── Research token display ─────────────────────────────────────────────────
@@ -456,8 +531,34 @@
     // Commit to repo (fire & forget)
     commitToken(tok);
 
+    // Auto-research: pipe token title into AI chat (non-blocking)
+    autoResearch(tok, result.primary);
+
     spinning = false;
     els.spinBtn.disabled = false;
+  }
+
+  // ── Auto-research on spin ──────────────────────────────────────────────────
+  async function autoResearch(tok, channel) {
+    if (typeof InfinityChat === 'undefined') return;
+    const query = `${tok.title} — ${(tok.keywords || []).slice(0, 3).join(', ')}`;
+    appendChatMsg(
+      `📻 Tuned to <strong>${channel.icon} ${channel.name}</strong> · researching: <em>${esc(tok.title.slice(0, 80))}</em>…`,
+      'ai-msg auto-research-msg'
+    );
+    if (els.chatTyping) els.chatTyping.style.display = 'flex';
+    const state = loadState();
+    const result2 = await InfinityChat.chat(query, state.token);
+    if (els.chatTyping) els.chatTyping.style.display = 'none';
+    appendChatMsg(result2.html, 'ai-msg');
+    // Scroll chat into view
+    if (els.chatMessages) els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   // ── Article toggle ─────────────────────────────────────────────────────────
@@ -499,7 +600,7 @@
       if (els.chatTyping) els.chatTyping.style.display = 'none';
       // Fallback if chat.js not loaded
       const ddg = `https://duckduckgo.com/?q=${encodeURIComponent(msg)}`;
-      appendChatMsg(`🤖 <a href="${ddg}" target="_blank" rel="noopener noreferrer">Search DuckDuckGo ↗</a>`, 'ai-msg');
+      appendChatMsg(`😎 <a href="${ddg}" target="_blank" rel="noopener noreferrer">Search DuckDuckGo ↗</a>`, 'ai-msg');
     }
     els.chatSend.disabled = false;
   }
