@@ -29,7 +29,7 @@ app.post('/api/commit', async (req, res) => {
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
       path: filename,
-      message: `🔬 Research token: Spin #${token.spin} — ${String(token.title).substring(0, 60)}`,
+      message: `🔬 Research token: Spin #${token.spin} — ${token.title.substring(0, 60)}`,
       content,
     });
     res.json({ committed: true, path: filename });
