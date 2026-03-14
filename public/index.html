@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>∞ Infinity System — Bitcoin Crusher</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <button class="icon-btn" id="menu-btn" aria-label="Menu">☰</button>
+      <span class="header-icon">₿</span>
+    </div>
+    <div class="header-center">
+      <span class="brand-infinity">∞ Infinity System</span>
+      <span class="brand-sep">·</span>
+      <span class="brand-crusher">Bitcoin Crusher</span>
+    </div>
+    <div class="header-right">
+      <span class="user-name">Kris</span>
+      <button class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── Slot Machine Section ────────────────────────────────────────── -->
+    <section class="slot-section">
+      <h1 class="section-title">∞ Infinity Slot Machine</h1>
+      <p class="section-desc">
+        Spin the reels. Crush Bitcoin. Every spin generates a unique scientific
+        research token committed forever to the repo.
+      </p>
+
+      <!-- Flow steps -->
+      <div class="flow-steps" aria-label="Spin flow">
+        <span class="flow-step">🟡 Spin</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">👑 Token</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">🔬 Research</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">🦾 Commit</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">💰 Value</span>
+      </div>
+
+      <!-- Bitcoin Crusher display card -->
+      <div class="crusher-display">
+        <div class="crusher-title">💎 BITCOIN CRUSHER 💎</div>
+        <div class="crusher-status" id="slot-status">
+          EVERY SPIN GENERATES A SCIENTIFIC RESEARCH TOKEN
+        </div>
+        <div class="win-indicator" id="win-indicator"></div>
+
+        <!-- Spin counter -->
+        <div class="counters-row">
+          <div class="counter">
+            <div class="counter-label">SPINS</div>
+            <div class="counter-value" id="spin-count">0</div>
+          </div>
+        </div>
+
+        <!-- Reel cells -->
+        <div class="reels-container" role="img" aria-label="Slot machine reels">
+          <div class="reel-cell" id="reel-0">🎰</div>
+          <div class="reel-cell" id="reel-1">🎰</div>
+          <div class="reel-cell" id="reel-2">🎰</div>
+        </div>
+
+        <!-- Spin button -->
+        <div class="spin-area">
+          <button class="spin-btn" id="spin-btn">🎰 SPIN &amp; CRUSH</button>
+        </div>
+
+        <!-- Score counter -->
+        <div class="score-row">
+          <div class="counter">
+            <div class="counter-label">SCORE</div>
+            <div class="counter-value" id="score-display">0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Research Token Section ──────────────────────────────────────── -->
+    <section class="token-section" aria-label="Latest research token">
+      <div class="token-header">
+        <span class="token-label">🔬 Latest Research Token</span>
+        <span class="token-if" id="token-if"></span>
+      </div>
+
+      <div>
+        <button class="article-btn" id="article-toggle">📄 Full Article</button>
+      </div>
+
+      <div class="token-title"   id="token-title">Spin the reels to generate a research token.</div>
+      <div class="token-authors" id="token-authors"></div>
+      <div class="token-journal" id="token-journal"></div>
+      <div class="token-doi"     id="token-doi"></div>
+      <div class="token-keywords" id="token-keywords"></div>
+      <div class="token-abstract" id="token-abstract"></div>
+
+      <!-- Full article (hidden by default) -->
+      <div class="full-article" id="full-article" style="display:none">
+        <div class="article-search-enriched" id="search-enriched-badge" style="display:none">
+          🌐 Search Enriched
+        </div>
+        <div class="article-meta" id="article-meta"></div>
+
+        <h3>Abstract</h3>
+        <p id="full-abstract"></p>
+
+        <h3>1. Introduction</h3>
+        <p id="section-intro"></p>
+
+        <h3>2. Materials &amp; Methods</h3>
+        <p id="section-methods"></p>
+
+        <h3>3. Results</h3>
+        <p id="section-results"></p>
+
+        <h3>4. Discussion</h3>
+        <p id="section-discussion"></p>
+
+        <h3>5. Conclusion</h3>
+        <p id="section-conclusion"></p>
+
+        <h3>References</h3>
+        <ol class="references" id="references"></ol>
+      </div>
+    </section>
+
+    <!-- ── AI Chat Section ─────────────────────────────────────────────── -->
+    <section class="chat-section" aria-label="Research AI Chat">
+      <div class="chat-header">
+        <span>🤖 Research AI Chat</span>
+        <div class="chat-links">
+          <a href="https://duckduckgo.com" target="_blank" rel="noopener noreferrer">DuckDuckGo</a>
+          <span>·</span>
+          <a href="https://archive.org" target="_blank" rel="noopener noreferrer">Archive.org</a>
+          <span>·</span>
+          <a href="https://www.science.gov" target="_blank" rel="noopener noreferrer">Science</a>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+        <div class="chat-msg ai-msg">
+          🤖 Hello! I am the Infinity Research AI. Ask me about science, cryptography,
+          materials, quantum physics, or anything else. I will cross-reference the
+          current research token and find you relevant links.
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <input
+          type="text"
+          class="chat-input"
+          id="chat-input"
+          placeholder="Ask the research AI…"
+          aria-label="Chat message"
+          autocomplete="off"
+        />
+        <button class="chat-send-btn" id="chat-send">Send</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/js/token-generator.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

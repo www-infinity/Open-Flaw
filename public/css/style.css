@@ -1,0 +1,400 @@
+/* style.css — ∞ Infinity Slot Machine dark casino theme */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0a0a14;
+  --bg-card:   #12121f;
+  --bg-card-2: #1a1a2e;
+  --border:    #2a2a4a;
+  --gold:      #f5c518;
+  --gold-dim:  #c9a000;
+  --green:     #00e676;
+  --cyan:      #00d4ff;
+  --red:       #ff4444;
+  --text:      #e8e8f0;
+  --text-dim:  #8080a0;
+  --mono: 'Courier New', 'Lucida Console', monospace;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1rem;
+}
+.header-left  { display: flex; align-items: center; gap: 0.75rem; }
+.header-center { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.header-right { display: flex; align-items: center; gap: 0.75rem; }
+
+.icon-btn {
+  background: none; border: none; color: var(--text);
+  cursor: pointer; font-size: 1.2rem; padding: 0.25rem; line-height: 1;
+}
+.header-icon { font-size: 1.2rem; color: var(--gold); }
+.brand-infinity { color: var(--gold); font-weight: 700; font-size: 0.95rem; }
+.brand-sep      { color: var(--text-dim); }
+.brand-crusher  { color: var(--cyan); font-weight: 600; font-size: 0.95rem; }
+.user-name      { color: var(--text-dim); font-size: 0.85rem; }
+.sign-out-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  transition: all 0.15s;
+}
+.sign-out-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Main layout ──────────────────────────────────────────────────────────── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Section header ───────────────────────────────────────────────────────── */
+.section-title {
+  font-size: 1.4rem;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+.section-desc {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  max-width: 580px;
+}
+
+/* ── Flow steps ───────────────────────────────────────────────────────────── */
+.flow-steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  margin-bottom: 1.75rem;
+}
+.flow-step  { color: var(--text); white-space: nowrap; }
+.flow-arrow { color: var(--text-dim); }
+
+/* ── Crusher display card ─────────────────────────────────────────────────── */
+.crusher-display {
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(245, 197, 24, 0.12);
+}
+
+.crusher-title {
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 12px rgba(245, 197, 24, 0.45);
+}
+.crusher-status {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  min-height: 1.1em;
+  margin-bottom: 0.4rem;
+}
+.win-indicator {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  min-height: 1.4em;
+  margin-bottom: 0.9rem;
+}
+.win-indicator.win  { color: var(--green); }
+.win-indicator.loss { color: var(--text-dim); }
+
+/* ── Counters ─────────────────────────────────────────────────────────────── */
+.counters-row { margin-bottom: 0.75rem; }
+.counter { display: inline-block; text-align: center; min-width: 100px; }
+.counter-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  margin-bottom: 0.2rem;
+}
+.counter-value {
+  font-family: var(--mono);
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: var(--gold);
+  line-height: 1;
+}
+
+/* ── Reel cells ───────────────────────────────────────────────────────────── */
+.reels-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem auto;
+}
+.reel-cell {
+  width: 88px;
+  height: 88px;
+  background: #070710;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  user-select: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.reel-cell.spinning {
+  border-color: var(--gold);
+  animation: reel-flash 0.08s linear infinite;
+}
+.reel-cell.reel-win {
+  border-color: var(--green);
+  box-shadow: 0 0 18px rgba(0, 230, 118, 0.5);
+  animation: win-pulse 0.5s ease-in-out 3;
+}
+@keyframes reel-flash {
+  0%, 100% { background: #070710; }
+  50%       { background: #0d0d18; }
+}
+@keyframes win-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.1); }
+}
+
+/* ── Spin button ──────────────────────────────────────────────────────────── */
+.spin-area { margin: 1.5rem 0 0.25rem; }
+.spin-btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  padding: 0.9rem 3rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.spin-btn:hover:not(:disabled) {
+  box-shadow: 0 0 22px rgba(245, 197, 24, 0.55);
+  transform: translateY(-2px);
+}
+.spin-btn:active:not(:disabled) { transform: translateY(0); }
+.spin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.score-row { margin-top: 0.5rem; }
+
+/* ── Research token card ──────────────────────────────────────────────────── */
+.token-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+.token-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+.token-label { font-size: 0.9rem; font-weight: 600; color: var(--cyan); }
+.token-if    { font-size: 0.8rem; color: var(--text-dim); }
+
+.article-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.65rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.15s;
+}
+.article-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.token-title    { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; line-height: 1.4; }
+.token-authors  { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.2rem; }
+.token-journal  { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.2rem; }
+.token-doi      { font-family: var(--mono); font-size: 0.78rem; color: var(--cyan); margin-bottom: 0.7rem; }
+
+.token-keywords { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem; }
+.keyword-tag {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 0.73rem;
+  padding: 0.12rem 0.45rem;
+}
+
+.token-abstract { font-size: 0.85rem; color: var(--text-dim); line-height: 1.65; }
+
+/* ── Full article ─────────────────────────────────────────────────────────── */
+.full-article {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+.article-search-enriched {
+  display: inline-block;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid var(--cyan);
+  border-radius: 4px;
+  color: var(--cyan);
+  font-size: 0.78rem;
+  padding: 0.2rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.article-meta {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+.full-article h3 {
+  color: var(--gold);
+  font-size: 0.92rem;
+  margin: 1.2rem 0 0.45rem;
+}
+.full-article p {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+  line-height: 1.72;
+}
+.references { list-style: none; }
+.references li {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  padding: 0.22rem 0;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(42, 42, 74, 0.4);
+}
+
+/* ── AI Chat ──────────────────────────────────────────────────────────────── */
+.chat-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card-2);
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chat-header > span { font-weight: 600; font-size: 0.9rem; }
+.chat-links { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; }
+.chat-links a   { color: var(--cyan); text-decoration: none; }
+.chat-links a:hover { text-decoration: underline; }
+.chat-links span { color: var(--text-dim); }
+
+.chat-messages {
+  padding: 1rem;
+  min-height: 110px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.chat-msg {
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  max-width: 88%;
+}
+.ai-msg {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+}
+.ai-msg a { color: var(--cyan); }
+.user-msg {
+  background: rgba(245, 197, 24, 0.08);
+  border: 1px solid rgba(245, 197, 24, 0.25);
+  align-self: flex-end;
+  color: var(--gold);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card-2);
+}
+.chat-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.84rem;
+  padding: 0.45rem 0.7rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input:focus { border-color: var(--cyan); }
+.chat-send-btn {
+  background: var(--gold);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  transition: background 0.15s;
+}
+.chat-send-btn:hover { background: #ffd700; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 580px) {
+  .crusher-title   { font-size: 0.95rem; letter-spacing: 0.06em; }
+  .counter-value   { font-size: 1.8rem; }
+  .spin-btn        { font-size: 0.88rem; padding: 0.75rem 1.75rem; }
+  .flow-steps      { font-size: 0.73rem; }
+  .header-center   { font-size: 0.78rem; }
+  .reel-cell       { width: 72px; height: 72px; font-size: 1.9rem; }
+}
