@@ -245,6 +245,7 @@
     chatMessages:   $('chat-messages'),
     chatInput:      $('chat-input'),
     chatSend:       $('chat-send'),
+    chatTyping:     $('chat-typing'),
   };
 
   // ── Hamburger menu ─────────────────────────────────────────────────────────
@@ -429,10 +430,14 @@
       els.slotStatus.textContent       = pick(LOCK_STATUSES);
       els.winIndicator.textContent     = `🔒 SIGNAL LOCK — ${result.primary.icon} ${result.primary.name}`;
       els.winIndicator.className       = 'win-indicator win';
+      // Pulse 3D background on win
+      if (typeof Bg3D !== 'undefined') Bg3D.setTheme('win');
     } else {
       els.slotStatus.textContent       = pick(SCAN_STATUSES);
       els.winIndicator.textContent     = `📡 Scanning… no lock. Spin again.`;
       els.winIndicator.className       = 'win-indicator loss';
+      // Brief pulse on scan too
+      if (typeof Bg3D !== 'undefined') Bg3D.pulse();
     }
 
     // Show tuned card + research token
@@ -479,11 +484,19 @@
     els.chatInput.value     = '';
     els.chatSend.disabled   = true;
 
+    // Show typing indicator while waiting
+    if (els.chatTyping) {
+      els.chatTyping.style.display = 'flex';
+      els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+    }
+
     if (typeof InfinityChat !== 'undefined') {
       const state = loadState();
       const result = await InfinityChat.chat(msg, state.token);
+      if (els.chatTyping) els.chatTyping.style.display = 'none';
       appendChatMsg(result.html, 'ai-msg');
     } else {
+      if (els.chatTyping) els.chatTyping.style.display = 'none';
       // Fallback if chat.js not loaded
       const ddg = `https://duckduckgo.com/?q=${encodeURIComponent(msg)}`;
       appendChatMsg(`🤖 <a href="${ddg}" target="_blank" rel="noopener noreferrer">Search DuckDuckGo ↗</a>`, 'ai-msg');

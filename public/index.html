@@ -8,6 +8,9 @@
 </head>
 <body>
 
+  <!-- ── 3D background canvas (behind everything) ─────────────────────────── -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
   <!-- ── Sidebar overlay ───────────────────────────────────────────────────── -->
   <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
 
@@ -17,13 +20,71 @@
       <span class="sidebar-title">∞ Infinity System</span>
       <button class="icon-btn sidebar-close-btn" id="sidebar-close" aria-label="Close menu">✕</button>
     </div>
-    <ul class="sidebar-nav">
-      <li><a href="#slot-section"   class="sidebar-link">📻 Radio Crusher</a></li>
-      <li><a href="#token-section"  class="sidebar-link">🔬 Research Token</a></li>
-      <li><a href="#wallet-section" class="sidebar-link">💰 Token Wallet</a></li>
-      <li><a href="#market-section" class="sidebar-link">🛒 Marketplace</a></li>
-      <li><a href="#chat-section"   class="sidebar-link">🤖 AI Chat</a></li>
-    </ul>
+
+    <div class="sidebar-scroll">
+      <!-- App Sections -->
+      <div class="sidebar-category">🏠 App Sections</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="#hero-3d"        class="sidebar-link">🌌 3D Universe</a></li>
+        <li><a href="#slot-section"   class="sidebar-link">📻 Radio Crusher</a></li>
+        <li><a href="#token-section"  class="sidebar-link">🔬 Research Token</a></li>
+        <li><a href="#wallet-section" class="sidebar-link">💰 Token Wallet</a></li>
+        <li><a href="#market-section" class="sidebar-link">🛒 Marketplace</a></li>
+        <li><a href="#chat-section"   class="sidebar-link">🤖 AI Chat</a></li>
+      </ul>
+
+      <!-- Infinity Network -->
+      <div class="sidebar-category">🌐 ∞ Infinity Network</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="https://github.com/www-infinity/Open-Flaw"   class="sidebar-link" target="_blank" rel="noopener noreferrer">🔬 Open-Flaw</a></li>
+        <li><a href="https://github.com/www-infinity/Open-Claw"   class="sidebar-link" target="_blank" rel="noopener noreferrer">💎 Open-Claw</a></li>
+        <li><a href="https://github.com/www-infinity"             class="sidebar-link" target="_blank" rel="noopener noreferrer">∞ GitHub · www-infinity</a></li>
+      </ul>
+
+      <!-- Live Radio -->
+      <div class="sidebar-category">📻 Live Radio</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="https://jazz24.org/"                          class="sidebar-link" target="_blank" rel="noopener noreferrer">🎷 Jazz24</a></li>
+        <li><a href="https://somafm.com/"                          class="sidebar-link" target="_blank" rel="noopener noreferrer">🎵 SomaFM</a></li>
+        <li><a href="https://www.bbc.co.uk/sounds"                 class="sidebar-link" target="_blank" rel="noopener noreferrer">📡 BBC Sounds</a></li>
+        <li><a href="https://www.websdr.org/"                      class="sidebar-link" target="_blank" rel="noopener noreferrer">🔭 WebSDR.org</a></li>
+        <li><a href="https://www.broadcastify.com/listen/"         class="sidebar-link" target="_blank" rel="noopener noreferrer">🚨 Broadcastify</a></li>
+        <li><a href="https://tunein.com/"                          class="sidebar-link" target="_blank" rel="noopener noreferrer">📻 TuneIn</a></li>
+        <li><a href="https://radioparadise.com/"                   class="sidebar-link" target="_blank" rel="noopener noreferrer">🌊 Radio Paradise</a></li>
+        <li><a href="https://priyom.org/"                          class="sidebar-link" target="_blank" rel="noopener noreferrer">🔢 Number Stations</a></li>
+      </ul>
+
+      <!-- Research & Science -->
+      <div class="sidebar-category">🔬 Research &amp; Science</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="https://duckduckgo.com/"             class="sidebar-link" target="_blank" rel="noopener noreferrer">🦆 DuckDuckGo</a></li>
+        <li><a href="https://archive.org/"                class="sidebar-link" target="_blank" rel="noopener noreferrer">📚 Archive.org</a></li>
+        <li><a href="https://www.science.gov/"            class="sidebar-link" target="_blank" rel="noopener noreferrer">🔬 Science.gov</a></li>
+        <li><a href="https://www.nasa.gov/"               class="sidebar-link" target="_blank" rel="noopener noreferrer">🚀 NASA</a></li>
+        <li><a href="https://www.ncbi.nlm.nih.gov/"       class="sidebar-link" target="_blank" rel="noopener noreferrer">🧬 PubMed / NCBI</a></li>
+        <li><a href="https://arxiv.org/"                  class="sidebar-link" target="_blank" rel="noopener noreferrer">📄 arXiv</a></li>
+        <li><a href="https://en.wikipedia.org/"           class="sidebar-link" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></li>
+        <li><a href="https://scholar.google.com/"         class="sidebar-link" target="_blank" rel="noopener noreferrer">🎓 Google Scholar</a></li>
+      </ul>
+
+      <!-- Crypto & Bitcoin -->
+      <div class="sidebar-category">₿ Crypto &amp; Bitcoin</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="https://www.coingecko.com/"         class="sidebar-link" target="_blank" rel="noopener noreferrer">📊 CoinGecko</a></li>
+        <li><a href="https://mempool.space/"             class="sidebar-link" target="_blank" rel="noopener noreferrer">⛏️ Mempool.space</a></li>
+        <li><a href="https://lightning.network/"         class="sidebar-link" target="_blank" rel="noopener noreferrer">⚡ Lightning Network</a></li>
+        <li><a href="https://blockstream.info/"          class="sidebar-link" target="_blank" rel="noopener noreferrer">🔗 Blockstream Explorer</a></li>
+      </ul>
+
+      <!-- AI Tools -->
+      <div class="sidebar-category">🤖 AI &amp; Tools</div>
+      <ul class="sidebar-nav-group">
+        <li><a href="https://openrouter.ai/"             class="sidebar-link" target="_blank" rel="noopener noreferrer">🌐 OpenRouter (LLM keys)</a></li>
+        <li><a href="https://platform.openai.com/"       class="sidebar-link" target="_blank" rel="noopener noreferrer">🤖 OpenAI Platform</a></li>
+        <li><a href="https://huggingface.co/"            class="sidebar-link" target="_blank" rel="noopener noreferrer">🤗 Hugging Face</a></li>
+      </ul>
+    </div>
+
     <div class="sidebar-footer">
       Tokens are earned, not bought.<br />1 per hour · spend in the Marketplace.
     </div>
@@ -33,7 +94,7 @@
   <header class="header">
     <div class="header-left">
       <button class="icon-btn" id="menu-btn" aria-label="Open menu">☰</button>
-      <span class="header-icon">��</span>
+      <span class="header-icon">∞</span>
     </div>
     <div class="header-center">
       <span class="brand-infinity">∞ Infinity System</span>
@@ -50,6 +111,21 @@
   </header>
 
   <main class="main">
+
+    <!-- ── 3D Hero Section ────────────────────────────────────────────────── -->
+    <section class="hero-3d" id="hero-3d" aria-label="3D Infinity Universe">
+      <div class="hero-overlay">
+        <div class="hero-infinity-sym">∞</div>
+        <div class="hero-title">INFINITY SYSTEM</div>
+        <div class="hero-sub">Radio · Research · AI · Marketplace · Cosmos</div>
+        <div class="hero-badges">
+          <span class="hero-badge">📻 Live Radio</span>
+          <span class="hero-badge">🔬 Research AI</span>
+          <span class="hero-badge">₿ Crypto</span>
+          <span class="hero-badge">🌌 3D Universe</span>
+        </div>
+      </div>
+    </section>
 
     <!-- ── Radio Crusher Section ─────────────────────────────────────────── -->
     <section class="slot-section" id="slot-section">
@@ -285,10 +361,17 @@
 
       <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
         <div class="chat-msg ai-msg">
-          🤖 Hello! I'm the Infinity Research AI. I search <strong>DuckDuckGo</strong> for real
-          answers, then build a logical response grounded in those results.
-          Ask me about radio channels, science, Bitcoin, the marketplace — anything!
+          🤖 Hello! I'm the Infinity Research AI — powered by a full LLM with live
+          <strong>DuckDuckGo</strong> search grounding. Ask me about radio channels,
+          science, Bitcoin, quantum physics, the marketplace — anything at all!
         </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="chat-typing" id="chat-typing" style="display:none" aria-label="AI is thinking">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
       </div>
 
       <div class="chat-input-row">
@@ -306,10 +389,14 @@
 
   </main>
 
+  <!-- Three.js (UMD build — exposes global THREE) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+
   <script src="js/token-generator.js"></script>
   <script src="js/wallet.js"></script>
   <script src="js/marketplace.js"></script>
   <script src="js/chat.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/background3d.js"></script>
 </body>
 </html>
